@@ -1,35 +1,23 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-const tabs = ['图片', '视频', '软件', '音乐']
-import img1 from '@/assets/image/1.jpg'
-import img2 from '@/assets/image/2.jpg'
-import img3 from '@/assets/image/3.jpg'
-import img4 from '@/assets/image/4.jpg'
-import img5 from '@/assets/image/5.jpg'
-import img6 from '@/assets/image/6.jpg'
-import img7 from '@/assets/image/7.jpg'
-import img8 from '@/assets/image/8.jpg'
-import img9 from '@/assets/image/9.jpg'
-import img10 from '@/assets/image/10.jpg'
-import img11 from '@/assets/image/11.jpg'
-const tabContents = reactive([
-  { title: 'Tab 1 Content', src: img1 },
-  { title: 'Tab 1 Content', src: img2 },
-  { title: 'Tab 1 Content', src: img3 },
-  { title: 'Tab 1 Content', src: img4 },
-  { title: 'Tab 1 Content', src: img5 },
-  { title: 'Tab 1 Content', src: img6 },
-  { title: 'Tab 1 Content', src: img7 },
-  { title: 'Tab 1 Content', src: img8 },
-  { title: 'Tab 1 Content', src: img9 },
-  { title: 'Tab 1 Content', src: img10 },
-  { title: 'Tab 1 Content', src: img11 }
-])
-const activeTab = ref(0)
-
-const openTab = (index: number) => {
-  activeTab.value = index
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+interface tabType {
+  tabs: string
+  components: string
 }
+const router = useRouter()
+const tabs = [
+  { tabs: '图片', components: '/imgList' },
+  { tabs: '视频', components: '/videoList' },
+  { tabs: '软件', components: '/imgList' },
+  { tabs: '音乐', components: '/imgList' }
+]
+const activeTab = ref(0)
+const openTab = (index: number, tab: tabType) => {
+  activeTab.value = index
+  router.push(tab.components)
+}
+openTab(0, tabs[0])
 </script>
 
 <template>
@@ -37,21 +25,13 @@ const openTab = (index: number) => {
     <button
       v-for="(tab, index) in tabs"
       :key="index"
-      @click="openTab(index)"
+      @click="openTab(index, tab)"
       :class="{ active: activeTab === index }"
     >
-      {{ tab }}
+      {{ tab.tabs }}
     </button>
   </div>
-
-  <div class="tabcontent" v-if="activeTab == 0">
-    <ul class="img-wrapper">
-      <li v-for="(content, index) in tabContents" :key="index">
-        <img :src="content.src" alt="" />
-        <p>{{ tabContents[index].title }}</p>
-      </li>
-    </ul>
-  </div>
+  <router-view />
 </template>
 <style>
 .tab {
